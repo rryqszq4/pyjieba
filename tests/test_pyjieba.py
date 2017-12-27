@@ -27,3 +27,8 @@ b = a.tag("我是拖拉机学院手扶拖拉机专业的。不用多久，我就
 
 for x,y in b.iteritems():
     print x,y
+
+b = a.extract("我是拖拉机学院手扶拖拉机专业的。不用多久，我就会升职加薪，当上CEO，走上人生巅峰。");
+
+for x in b:
+    print x['word'], x['weight']
