@@ -180,11 +180,57 @@ pyjieba_tag(pyjieba_t *self, PyObject *args, PyObject *kwargs)
     return _mapping;
 }
 
+static PyObject *
+pyjieba_extractor(pyjieba_t *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = {(char *)"sentence", (char *)"topk", NULL};
+    PyObject *_text;
+    int topk = 20;
+    PyObject *_mapping;
+    PyObject *_list;
+    PyObject *_value;
+    std::vector<cppjieba::KeywordExtractor::Word> words;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|i", kwlist, &_text, &topk)) {
+        return NULL;
+    }
+
+    std::string s (PyBytes_AS_STRING(_text), PyBytes_GET_SIZE(_text));
+    self->extractor->Extract(s, words, topk);
+
+    _list = PyList_New(0);
+
+    size_t i;
+    for (i = 0; i < words.size(); i++) {
+        // c++ debug
+        // std::cout << words[i].word << std::endl;
+        // std::cout << words[i].weight << std::endl;
+        _mapping = PyDict_New();
+        
+        _value = PyString_FromStringAndSize(words[i].word.c_str(), words[i].word.size());
+        PyDict_SetItemString(_mapping, "word", _value);
+        Py_DECREF(_value);
+        
+        _value = PyFloat_FromDouble(words[i].weight);
+        PyDict_SetItemString(_mapping, "weight", _value);
+        Py_DECREF(_value);
+
+        PyList_Append(_list, _mapping);
+        Py_DECREF(_mapping);
+    }
+
+    // c++ debug
+    // std::cout << words << std::endl;
+
+    return _list;
+}
+
 static PyMethodDef pyjiebaMethods[] = {
     {"cut", (PyCFunction)pyjieba_cut, METH_VARARGS | METH_KEYWORDS, "jieba.cut"},
     {"cut_all", (PyCFunction)pyjieba_cut_all, METH_VARARGS | METH_KEYWORDS, "jieba.cut_all"},
     {"cut_for_search", (PyCFunction)pyjieba_cut_for_search, METH_VARARGS | METH_KEYWORDS, "jieba.cut_for_search"},
     {"tag", (PyCFunction)pyjieba_tag, METH_VARARGS | METH_KEYWORDS, "jieba.tag"},
+    {"extract", (PyCFunction)pyjieba_extractor, METH_VARARGS | METH_KEYWORDS, "jieba.extract"},
     {NULL, NULL}
 };
 
