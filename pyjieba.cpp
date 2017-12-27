@@ -31,14 +31,26 @@ pyjieba_init(pyjieba_t *self, PyObject *args, PyObject *kwargs)
             stop_word_path
         );
 
+    self->extractor = new cppjieba::KeywordExtractor(
+            dict_path,
+            hmm_path,
+            idf_path,
+            stop_word_path,
+            user_dict_path
+        );
+
     return 0;
 }
 
 void
 pyjieba_dealloc(pyjieba_t *self)
 {
-    cppjieba::Jieba* x = (cppjieba::Jieba*)self->jieba_handler;
+    cppjieba::Jieba* x = (cppjieba::Jieba *) self->jieba_handler;
     delete x;
+
+    cppjieba::KeywordExtractor* y = (cppjieba::KeywordExtractor *) self->extractor;
+    delete y;
+
     return ;
 }
 
@@ -61,14 +73,14 @@ pyjieba_cut(pyjieba_t *self, PyObject *args, PyObject *kwargs)
     _list = PyList_New(0);
 
     for (size_t i = 0; i < words.size(); i++) {
-        // c++ debug;
+        // c++ debug
         // std::cout << words[i].c_str() << std::endl;
         _item = PyString_FromStringAndSize(words[i].c_str(), words[i].size());
         PyList_Append(_list, _item);
         Py_DECREF(_item);
     }
 
-    // c++ debug;
+    // c++ debug
     // std::cout << limonp::Join(words.begin(), words.end(), "/") << std::endl;
 
     return _list;
@@ -98,7 +110,7 @@ pyjieba_cut_all(pyjieba_t *self, PyObject *args, PyObject *kwargs)
         Py_DECREF(_item);
     }
 
-    // c++ debug;
+    // c++ debug
     // std::cout << limonp::Join(words.begin(), words.end(), "/") << std::endl;
 
     return _list;
@@ -128,23 +140,58 @@ pyjieba_cut_for_search(pyjieba_t *self, PyObject *args, PyObject *kwargs)
         Py_DECREF(_item);
     }
 
-    // c++ debug;
+    // c++ debug
     // std::cout << limonp::Join(words.begin(), words.end(), "/") << std::endl;
 
     return _list;
 }
 
+static PyObject *
+pyjieba_tag(pyjieba_t *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = {(char *)"sentence", NULL};
+    PyObject *_text;
+    PyObject *_mapping;
+    PyObject *_key;
+    PyObject *_value;
+    std::vector<std::pair<std::string, std::string> > tag_words;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", kwlist, &_text)) {
+        return NULL;
+    }
+
+    std::string s (PyBytes_AS_STRING(_text), PyBytes_GET_SIZE(_text));
+    self->jieba_handler->Tag(s, tag_words);
+
+    _mapping = PyDict_New();
+
+    size_t i;
+    for (i = 0; i < tag_words.size(); i++) {
+        // c++ debug
+        // std::cout << tag_words[i].first << std::endl;
+        // std::cout << tag_words[i].second << std::endl;
+        _key = PyString_FromStringAndSize(tag_words[i].first.c_str(), tag_words[i].first.size());
+        _value = PyString_FromStringAndSize(tag_words[i].second.c_str(), tag_words[i].second.size());
+        PyDict_SetItem(_mapping, _key, _value);
+        Py_DECREF(_key);
+        Py_DECREF(_value);
+    }
+
+    return _mapping;
+}
+
 static PyMethodDef pyjiebaMethods[] = {
-    {"cut", (PyCFunction)pyjieba_cut, METH_VARARGS | METH_KEYWORDS, "pyjieba.cut"},
-    {"cut_all", (PyCFunction)pyjieba_cut_all, METH_VARARGS | METH_KEYWORDS, "pyjieba.cut_all"},
-    {"cut_for_search", (PyCFunction)pyjieba_cut_for_search, METH_VARARGS | METH_KEYWORDS, "pyjieba.cut_for_search"},
+    {"cut", (PyCFunction)pyjieba_cut, METH_VARARGS | METH_KEYWORDS, "jieba.cut"},
+    {"cut_all", (PyCFunction)pyjieba_cut_all, METH_VARARGS | METH_KEYWORDS, "jieba.cut_all"},
+    {"cut_for_search", (PyCFunction)pyjieba_cut_for_search, METH_VARARGS | METH_KEYWORDS, "jieba.cut_for_search"},
+    {"tag", (PyCFunction)pyjieba_tag, METH_VARARGS | METH_KEYWORDS, "jieba.tag"},
     {NULL, NULL}
 };
 
 PyDoc_STRVAR(pyjieba_doc, 
 "pyjieba.pyjieba");
 
-static PyTypeObject pyjieba_OjbectType = {
+static PyTypeObject pyjieba_ObjectType = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "pyjieba.pyjieba",                              /* tp_name */
     sizeof(pyjieba_t),                              /* tp_basicsize */
@@ -190,8 +237,8 @@ PyMODINIT_FUNC initpyjieba(void)
 {
     PyObject *module;
 
-    pyjieba_OjbectType.tp_new = PyType_GenericNew;
-    if (PyType_Ready(&pyjieba_OjbectType) < 0) {
+    pyjieba_ObjectType.tp_new = PyType_GenericNew;
+    if (PyType_Ready(&pyjieba_ObjectType) < 0) {
         return ;
     }
 
@@ -200,6 +247,6 @@ PyMODINIT_FUNC initpyjieba(void)
         return ;
     }
 
-    Py_INCREF(&pyjieba_OjbectType);
-    PyModule_AddObject(module, "pyjieba", (PyObject *) &pyjieba_OjbectType);
+    Py_INCREF(&pyjieba_ObjectType);
+    PyModule_AddObject(module, "jieba", (PyObject *) &pyjieba_ObjectType);
 }
