@@ -20,7 +20,7 @@ pyjieba_init(pyjieba_t *self, PyObject *args, PyObject *kwargs)
     const char *idf_path = "cppjieba/dict/idf.utf8";
     const char *stop_word_path = "cppjieba/dict/stop_words.utf8";
     
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "sssss", kwlist, 
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|sssss", kwlist, 
         &dict_path, &hmm_path, &user_dict_path, &idf_path, &stop_word_path)) 
     {
         return -1;
