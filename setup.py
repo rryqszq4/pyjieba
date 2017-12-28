@@ -14,5 +14,8 @@ setup (name = 'pyjieba',
     description = '',
     author = 'rryqszq4',
     author_email = 'rryqszq@gmail.com',
-    ext_modules = [pyjieba_module]
+    ext_modules = [pyjieba_module],
+    packages = ['cppjieba'],
+    package_dir = {'cppjieba': 'cppjieba'},
+    package_data = {'cppjieba': ['dict/*.utf8']}
     )

@@ -14,8 +14,11 @@ pyjieba_init(pyjieba_t *self, PyObject *args, PyObject *kwargs)
         (char *)"stop_word_path",
         NULL
     };
-    char *dict_path;
-    char *hmm_path, *user_dict_path, *idf_path, *stop_word_path;
+    const char *dict_path = "cppjieba/dict/jieba.dict.utf8";
+    const char *hmm_path = "cppjieba/dict/hmm_model.utf8";
+    const char *user_dict_path = "cppjieba/dict/user.dict.utf8";
+    const char *idf_path = "cppjieba/dict/idf.utf8";
+    const char *stop_word_path = "cppjieba/dict/stop_words.utf8";
     
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "sssss", kwlist, 
         &dict_path, &hmm_path, &user_dict_path, &idf_path, &stop_word_path)) 
