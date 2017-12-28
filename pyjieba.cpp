@@ -67,6 +67,15 @@ pyjieba_cut(pyjieba_t *self, PyObject *args, PyObject *kwargs)
         return NULL;
     }
 
+    if (PyBytes_Check(_text)) {
+        // pass    
+    }else if (PyUnicode_Check(_text)) {
+        _text = PyUnicode_AsUTF8String(_text);
+    }else {
+        PyErr_SetString(PyExc_TypeError, "Expected string or utf-8 encoded bytes.");
+        return NULL;
+    }
+
     std::string s (PyBytes_AS_STRING(_text), PyBytes_GET_SIZE(_text));
     self->jieba_handler->Cut(s, words);
 
@@ -96,6 +105,15 @@ pyjieba_cut_all(pyjieba_t *self, PyObject *args, PyObject *kwargs)
     std::vector<std::string> words;
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", kwlist, &_text)) {
+        return NULL;
+    }
+
+    if (PyBytes_Check(_text)) {
+        // pass    
+    }else if (PyUnicode_Check(_text)) {
+        _text = PyUnicode_AsUTF8String(_text);
+    }else {
+        PyErr_SetString(PyExc_TypeError, "Expected string or utf-8 encoded bytes.");
         return NULL;
     }
 
@@ -129,6 +147,15 @@ pyjieba_cut_for_search(pyjieba_t *self, PyObject *args, PyObject *kwargs)
         return NULL;
     }
 
+    if (PyBytes_Check(_text)) {
+        // pass    
+    }else if (PyUnicode_Check(_text)) {
+        _text = PyUnicode_AsUTF8String(_text);
+    }else {
+        PyErr_SetString(PyExc_TypeError, "Expected string or utf-8 encoded bytes.");
+        return NULL;
+    }
+
     std::string s (PyBytes_AS_STRING(_text), PyBytes_GET_SIZE(_text));
     self->jieba_handler->CutForSearch(s, words);
 
@@ -157,6 +184,15 @@ pyjieba_tag(pyjieba_t *self, PyObject *args, PyObject *kwargs)
     std::vector<std::pair<std::string, std::string> > tag_words;
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", kwlist, &_text)) {
+        return NULL;
+    }
+
+    if (PyBytes_Check(_text)) {
+        // pass    
+    }else if (PyUnicode_Check(_text)) {
+        _text = PyUnicode_AsUTF8String(_text);
+    }else {
+        PyErr_SetString(PyExc_TypeError, "Expected string or utf-8 encoded bytes.");
         return NULL;
     }
 
@@ -192,6 +228,15 @@ pyjieba_extractor(pyjieba_t *self, PyObject *args, PyObject *kwargs)
     std::vector<cppjieba::KeywordExtractor::Word> words;
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|i", kwlist, &_text, &topk)) {
+        return NULL;
+    }
+
+    if (PyBytes_Check(_text)) {
+        // pass    
+    }else if (PyUnicode_Check(_text)) {
+        _text = PyUnicode_AsUTF8String(_text);
+    }else {
+        PyErr_SetString(PyExc_TypeError, "Expected string or utf-8 encoded bytes.");
         return NULL;
     }
 
