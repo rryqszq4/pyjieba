@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-import pyjieba
+from pyjieba import jieba
 
-a = pyjieba.jieba(
+a = jieba(
         'cppjieba/dict/jieba.dict.utf8',
         'cppjieba/dict/hmm_model.utf8',
         'cppjieba/dict/user.dict.utf8',
@@ -12,6 +12,10 @@ a = pyjieba.jieba(
 print a
 
 b = a.cut("小明硕士毕业于中国科学院计算所，后在日本京都大学深造")
+
+print "/".join(b)
+
+b = a.cut("小明硕士毕业于中国科学院计算所，后在日本京都大学深造", False)
 
 print "/".join(b)
 
