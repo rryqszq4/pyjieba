@@ -60,13 +60,15 @@ pyjieba_dealloc(pyjieba_t *self)
 static PyObject *
 pyjieba_cut(pyjieba_t *self, PyObject *args, PyObject *kwargs)
 {
-    static char *kwlist[] = {(char *)"sentence", NULL};
+    static char *kwlist[] = {(char *)"sentence", (char *)"hmm", NULL};
     PyObject *_text;
+    PyObject *_hmm = Py_True;
+    bool hmm = true;
     PyObject *_list;
     PyObject *_item;
     std::vector<std::string> words;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O", kwlist, &_text)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|O", kwlist, &_text, &_hmm)) {
         return NULL;
     }
 
@@ -79,8 +81,15 @@ pyjieba_cut(pyjieba_t *self, PyObject *args, PyObject *kwargs)
         return NULL;
     }
 
+    if (!PyBool_Check(_hmm)) {
+        PyErr_SetString(PyExc_TypeError, "Args 'hmm' not bool type.");
+        return NULL;
+    }
+
+    hmm = (_hmm == Py_False) ? false : true;
+
     std::string s (PyBytes_AS_STRING(_text), PyBytes_GET_SIZE(_text));
-    self->jieba_handler->Cut(s, words);
+    self->jieba_handler->Cut(s, words, hmm);
 
     _list = PyList_New(0);
 
