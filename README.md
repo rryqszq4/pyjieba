@@ -23,6 +23,10 @@ Getting Started
 >>> seg_list = seg.cut("他来到了网易杭研大厦")
 >>> print  "/".join(seg_list)
 他/来到/了/网易/杭研/大厦
+>>>
+>>> seg_list = seg.cut("他来到了网易杭研大厦",hmm=False)
+>>> print  "/".join(seg_list)
+他/来到/了/网易/杭/研/大厦
 >>> 
 >>> seg_list = seg.cut_all("我来到北京清华大学")
 >>> print "/".join(seg_list)
