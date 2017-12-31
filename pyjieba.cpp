@@ -1,3 +1,6 @@
+/*
+ *  Copyright (c) 2017-2018, Quan Zhao <rryqszq@gmail.com>
+ */
 
 #include <Python.h>
 #include "Jieba.hpp"
