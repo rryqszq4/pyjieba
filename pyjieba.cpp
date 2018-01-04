@@ -65,6 +65,7 @@ pyjieba_cut(pyjieba_t *self, PyObject *args, PyObject *kwargs)
 {
     static char *kwlist[] = {(char *)"sentence", (char *)"hmm", NULL};
     PyObject *_text;
+    PyObject *_format_text;
     PyObject *_hmm = Py_True;
     bool hmm = true;
     PyObject *_list;
@@ -76,9 +77,10 @@ pyjieba_cut(pyjieba_t *self, PyObject *args, PyObject *kwargs)
     }
 
     if (PyBytes_Check(_text)) {
-        // pass    
+        _format_text = _text;
+        Py_INCREF(_format_text);   
     }else if (PyUnicode_Check(_text)) {
-        _text = PyUnicode_AsUTF8String(_text);
+        _format_text = PyUnicode_AsUTF8String(_text);
     }else {
         PyErr_SetString(PyExc_TypeError, "Expected string or utf-8 encoded bytes.");
         return NULL;
@@ -91,8 +93,10 @@ pyjieba_cut(pyjieba_t *self, PyObject *args, PyObject *kwargs)
 
     hmm = (_hmm == Py_False) ? false : true;
 
-    std::string s (PyBytes_AS_STRING(_text), PyBytes_GET_SIZE(_text));
+    std::string s (PyBytes_AS_STRING(_format_text), PyBytes_GET_SIZE(_format_text));
     self->jieba_handler->Cut(s, words, hmm);
+
+    Py_DECREF(_format_text);
 
     _list = PyList_New(0);
 
@@ -115,6 +119,7 @@ pyjieba_cut_all(pyjieba_t *self, PyObject *args, PyObject *kwargs)
 {
     static char *kwlist[] = {(char *)"sentence", NULL};
     PyObject *_text;
+    PyObject *_format_text;
     PyObject *_list;
     PyObject *_item;
     std::vector<std::string> words;
@@ -124,16 +129,19 @@ pyjieba_cut_all(pyjieba_t *self, PyObject *args, PyObject *kwargs)
     }
 
     if (PyBytes_Check(_text)) {
-        // pass    
+        _format_text = _text;
+        Py_INCREF(_format_text);    
     }else if (PyUnicode_Check(_text)) {
-        _text = PyUnicode_AsUTF8String(_text);
+        _format_text = PyUnicode_AsUTF8String(_text);
     }else {
         PyErr_SetString(PyExc_TypeError, "Expected string or utf-8 encoded bytes.");
         return NULL;
     }
 
-    std::string s (PyBytes_AS_STRING(_text), PyBytes_GET_SIZE(_text));
+    std::string s (PyBytes_AS_STRING(_format_text), PyBytes_GET_SIZE(_format_text));
     self->jieba_handler->CutAll(s, words);
+
+    Py_DECREF(_format_text);
 
     _list = PyList_New(0);
 
@@ -154,6 +162,7 @@ pyjieba_cut_for_search(pyjieba_t *self, PyObject *args, PyObject *kwargs)
 {
     static char *kwlist[] = {(char *)"sentence", NULL};
     PyObject *_text;
+    PyObject *_format_text;
     PyObject *_list;
     PyObject *_item;
     std::vector<std::string> words;
@@ -163,16 +172,19 @@ pyjieba_cut_for_search(pyjieba_t *self, PyObject *args, PyObject *kwargs)
     }
 
     if (PyBytes_Check(_text)) {
-        // pass    
+        _format_text = _text;
+        Py_INCREF(_format_text);   
     }else if (PyUnicode_Check(_text)) {
-        _text = PyUnicode_AsUTF8String(_text);
+        _format_text = PyUnicode_AsUTF8String(_text);
     }else {
         PyErr_SetString(PyExc_TypeError, "Expected string or utf-8 encoded bytes.");
         return NULL;
     }
 
-    std::string s (PyBytes_AS_STRING(_text), PyBytes_GET_SIZE(_text));
+    std::string s (PyBytes_AS_STRING(_format_text), PyBytes_GET_SIZE(_format_text));
     self->jieba_handler->CutForSearch(s, words);
+
+    Py_INCREF(_format_text);
 
     _list = PyList_New(0);
 
@@ -193,6 +205,7 @@ pyjieba_tag(pyjieba_t *self, PyObject *args, PyObject *kwargs)
 {
     static char *kwlist[] = {(char *)"sentence", NULL};
     PyObject *_text;
+    PyObject *_format_text;
     PyObject *_mapping;
     PyObject *_key;
     PyObject *_value;
@@ -203,16 +216,19 @@ pyjieba_tag(pyjieba_t *self, PyObject *args, PyObject *kwargs)
     }
 
     if (PyBytes_Check(_text)) {
-        // pass    
+        _format_text = _text;
+        Py_INCREF(_format_text);   
     }else if (PyUnicode_Check(_text)) {
-        _text = PyUnicode_AsUTF8String(_text);
+        _format_text = PyUnicode_AsUTF8String(_text);
     }else {
         PyErr_SetString(PyExc_TypeError, "Expected string or utf-8 encoded bytes.");
         return NULL;
     }
 
-    std::string s (PyBytes_AS_STRING(_text), PyBytes_GET_SIZE(_text));
+    std::string s (PyBytes_AS_STRING(_format_text), PyBytes_GET_SIZE(_format_text));
     self->jieba_handler->Tag(s, tag_words);
+
+    Py_DECREF(_format_text);
 
     _mapping = PyDict_New();
 
@@ -236,6 +252,7 @@ pyjieba_extractor(pyjieba_t *self, PyObject *args, PyObject *kwargs)
 {
     static char *kwlist[] = {(char *)"sentence", (char *)"topk", NULL};
     PyObject *_text;
+    PyObject *_format_text;
     int topk = 20;
     PyObject *_mapping;
     PyObject *_list;
@@ -247,16 +264,19 @@ pyjieba_extractor(pyjieba_t *self, PyObject *args, PyObject *kwargs)
     }
 
     if (PyBytes_Check(_text)) {
-        // pass    
+        _format_text = _text;
+        Py_INCREF(_format_text);   
     }else if (PyUnicode_Check(_text)) {
-        _text = PyUnicode_AsUTF8String(_text);
+        _format_text = PyUnicode_AsUTF8String(_text);
     }else {
         PyErr_SetString(PyExc_TypeError, "Expected string or utf-8 encoded bytes.");
         return NULL;
     }
 
-    std::string s (PyBytes_AS_STRING(_text), PyBytes_GET_SIZE(_text));
+    std::string s (PyBytes_AS_STRING(_format_text), PyBytes_GET_SIZE(_format_text));
     self->extractor->Extract(s, words, topk);
+
+    Py_DECREF(_format_text);
 
     _list = PyList_New(0);
 
