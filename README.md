@@ -2,6 +2,8 @@ pyjieba
 =======
 Pyjieba is a jieba library written in c++ with python bindings.
 
+You can read more info at [cppjieba](https://github.com/yanyiwu/cppjieba).
+
 Requirement
 -----------
 - python 2.7+
